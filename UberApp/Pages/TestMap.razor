@@ -1,0 +1,26 @@
+@page "/TestMap"
+@inject IJSRuntime JSRuntime
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta   charset="UTF-8">
+</head>
+<body>
+<div id="mapid" style="height: 180px;"></div>
+
+</body>
+</html>
+
+
+@code
+{
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await JSRuntime.InvokeVoidAsync(
+            "testMap.firstFunction");
+    }
+
+}
