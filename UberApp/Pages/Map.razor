@@ -5,7 +5,7 @@
 <div id="mapid" style="height: 100%; width: 100%;"></div>
 
 @code {
-    string elementId = $"map-{Guid.NewGuid().ToString("D")}";
+    string elementId = "mapid"; //$"map-{Guid.NewGuid().ToString("D")}";
     
     [Parameter] public double Zoom { get; set; }
     [Parameter] public List<Marker> Markers { get; set; }
@@ -14,8 +14,8 @@
     {
         Markers = new List<Marker>
         {
-            new Marker {Description = "Test1", ShowPopup = true, X = 41.951157, Y = -87.651512},
-            new Marker {Description = "Test2", ShowPopup = true, X = 41.932844, Y = -87.658722}
+            new Marker {Description = "Test1", ShowPopup = true, Y = 41.951157, X = -87.651512},
+            new Marker {Description = "Test2", ShowPopup = true, Y = 41.932844, X = -87.658722}
         };
 
         await JSRuntime.InvokeVoidAsync(

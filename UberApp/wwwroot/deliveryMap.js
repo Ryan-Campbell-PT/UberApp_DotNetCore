@@ -5,16 +5,45 @@
     // Global export
     window.deliveryMap = {
         showOrUpdate: function (elementId, markers) {
-            var mymap = L.map('mapid').setView([51.505, -0.09], 13);
+            var elem = document.getElementById(elementId);
+            if (!elem) {
+                throw new Error('No element with ID ' + elementId);
+            }
 
-            L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
-                attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-                maxZoom: 18,
-                id: 'mapbox/streets-v11',
-                tileSize: 512,
-                zoomOffset: -1,
-                accessToken: 'pk.eyJ1IjoicmNhbXBiMjciLCJhIjoiY2t0ajJvbnc2MTdydjJvcW5hYzhhbG9qaiJ9.IElatfLFvnK-MnrJyp67sQ'
-            }).addTo(mymap);
+            // Initialize map if needed
+            if (!elem.map) {
+                elem.map = L.map(elementId);
+                elem.map.addedMarkers = [];
+                L.tileLayer(tileUrl, { attribution: tileAttribution }).addTo(elem.map);
+            }
+
+            var map = elem.map;
+            if (map.addedMarkers.length !== markers.length) {
+                // Markers have changed, so reset
+                map.addedMarkers.forEach(marker => marker.removeFrom(map));
+                map.addedMarkers = markers.map(m => {
+                    return L.marker([m.y, m.x]).bindPopup(m.description).addTo(map);
+                });
+
+                // Auto-fit the view
+                var markersGroup = new L.featureGroup(map.addedMarkers);
+                map.fitBounds(markersGroup.getBounds().pad(0.3));
+
+                // Show applicable popups. Can't do this until after the view was auto-fitted.
+                markers.forEach((marker, index) => {
+                    if (marker.showPopup) {
+                        map.addedMarkers[index].openPopup();
+                    }
+                });
+            } else {
+                // Same number of markers, so update positions/text without changing view bounds
+                markers.forEach((marker, index) => {
+                    animateMarkerMove(
+                        map.addedMarkers[index].setPopupContent(marker.description),
+                        marker,
+                        4000);
+                });
+            }
 
         }
     };

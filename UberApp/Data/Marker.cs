@@ -4,6 +4,7 @@
     {
         public string Description { get; set; }
 
+        //According to Google Maps, X is actually the second number, while Y is the first?
         public double X { get; set; }
 
         public double Y { get; set; }
